@@ -1,80 +1,85 @@
-import React, { Component }  from "react";
+import React, { Component } from "react";
+import "./App.css";
 
-
-//Use when not exported as a const
-// export default App;
-
-
-const styles = {
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-evenly',
-    alignItems: 'center'
-  }
-};
-
-
-const Form = (props) => {
-  const { email, password, styles, submitFunction, onChangeFunction } = props;
-  return (
-    <form style={styles.container} onSubmit={submitFunction}>
-      <TextField textFieldName="email" textFieldType="email" style={{
-
-      }} value={email} changeFunction={onChangeFunction} />
-      <TextField textFieldName="password" textFieldType="password" style={{
-
-      }} value={password} changeFunction={onChangeFunction} />
-      <TextField textFieldType="submit" value="submit" />
-    </form>
-  );
-}
-
-const TextField = (props) => {
-  const { textFieldName, textFieldType, value, style, changeFunction } = props;
-  return (
-    <input name={textFieldName} value={value} type={textFieldType} style={style} onChange={changeFunction} />
-  );
-}
-
-export default class App extends Component {
-
-
+class App extends Component {
   state = {
-    email: '',
-    password: ''
+    count: 0,
+    isOn: false,
+    x: null,
+    y: null,
+    todos: []
   };
 
-  constructor(props) {
-    super(props);
-    this.handleInput = this.handleInput.bind(this);
+  handleClick = () => {
+    this.setState(prevState => ({
+      count: prevState.count + 1
+    }));
+  };
+
+  toggleLight = () => {
+    this.setState(prevState => ({
+      isOn: !prevState.isOn
+    }));
+  };
+
+  getJsonPlaceHolderData = () => {
+    fetch('https://jsonplaceholder.typicode.com/todos')
+      .then(response => response.json())
+      .then(responseData => { 
+        this.setState({
+          todos: responseData
+        })
+      }).catch(err => {
+        console.log(err);
+      })
+  };
+
+  componentDidMount() {
+    document.title = `You have clicked ${this.state.count} times`;
+    window.addEventListener("mousemove", this.handleMouseMove);
+    this.getJsonPlaceHolderData();
   }
 
-  handleInput(e) {
-
+  componentWillUnmount() {
+    window.removeEventListener("mousemove", this.handleMouseMove);
   }
 
-  handleInputChange = e => {
-    const { name, value } = e.target;
-    console.log("Name ", name);
-    console.log("Value ", value);
+  handleMouseMove = event => {
     this.setState({
-      ...this.state,
-      [name]: value
+      x: event.pageX,
+      y: event.pageY
     });
-  }
+  };
 
-  handleSubmit = e => {
-    e.preventDefault();
-    console.log("Values", JSON.stringify(this.state, null, 3));
+  comp;
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.count !== prevState.count) {
+      document.title = `You have clicked ${this.state.count} times`;
+    }
   }
 
   render() {
-    const { id, sentence } = this.props;
-    const { email, password } = this.state;
     return (
-      <Form email={this.state.email} password={this.state.password} styles={styles} submitFunction={this.handleSubmit} onChangeFunction={this.handleInputChange} />
+      <div className="container">
+        <button className="my-button" onClick={this.handleClick}>
+          I was clicked {this.state.count} time
+        </button>
+        <h2>Toggle Light</h2>
+        <div className={this.state.isOn ? 'color-state-changed' : 'color-state'}
+          onClick={this.toggleLight}
+        />
+        <h2>Mouse position</h2>
+        <p>X position: {this.state.x}</p>
+        <p>Y position: {this.state.y}</p>
+        <div>
+          {this.state.todos.map(todo => {
+            return <h3 className="list-items">{todo.title}</h3>
+          })}
+        </div>
+      </div>
     );
   }
 }
 
+export default App;

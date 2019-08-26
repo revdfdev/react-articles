@@ -1,23 +1,20 @@
-import React, { useState, useContext } from "react";
-import TodoContext from "../../context";
+import React from "react";
+import Form from './Form';
 
-export default function TodoForm() {
-  const [todo, setTodo] = useState("");
-  const { dispatch } = useContext(TodoContext);
-
-  const handleSubmit = event => {
-    event.preventDefault();
-    dispatch({ type: "ADD_TODO", payload: todo });
-    setTodo("");
-  };
-
+const Form = (props) => {
+  const { email, password, styles, submitFunction, onChangeFunction } = props;
   return (
-    <form onSubmit={handleSubmit} className="flex justify-center p-5">
-      <input
-        type="text"
-        onChange={e => setTodo(e.target.value)}
-        className="border-black border-solid border-2"
-      />
+    <form style={styles.container} onSubmit={submitFunction}>
+      <img src={logo} alt="logo" />
+      <TextField textFieldName="email" textFieldType="email" style={{
+
+      }} value={email} changeFunction={onChangeFunction} />
+      <TextField textFieldName="password" textFieldType="password" style={{
+
+      }} value={password} changeFunction={onChangeFunction} />
+      <TextField textFieldType="submit" value="submit" />
     </form>
   );
 }
+
+export default Form;

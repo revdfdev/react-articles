@@ -1,10 +1,10 @@
-import uuidv4 from "uuid/v4";
+
 
 export default function reducer(state, action) {
   switch (action.type) {
     case "ADD_TODO":
       const newTodo = {
-        id: uuidv4(),
+        id: 0,
         text: action.payload,
         complete: false
       };
